@@ -1,11 +1,34 @@
+import { useEffect, useState } from "react";
+
 export const Navbar = () => {
   // TODO: Obtener datos del usuario desde /api/profile
   // TODO: Implementar función handleLogout con POST a /api/logout usando credentials: 'include'
   // TODO: Después del logout exitoso, redireccionar a /login
   // TODO: Manejar errores apropiadamente
+  const [profile, setProfile] = useState({})
 
-  const userName = "Usuario"; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
+  const getProfile = async() => {
+    try {
+      const response = await fetch("http://localhost:3000/api/profile", {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json()
+      console.log(data)
 
+      if (response.ok) {
+        setProfile(data);
+      } 
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(()=>{
+    getProfile()
+  }, [])
+
+  const userName = profile.user.name; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
   return (
     <nav className="bg-gray-900 text-white h-16 left-0 right-0 shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 h-full flex items-center justify-between">

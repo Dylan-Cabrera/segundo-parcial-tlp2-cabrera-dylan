@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router";
 import { useForm } from "../hooks/useForm";
+import { useEffect } from "react";
 
 export const RegisterPage = () => {
   // TODO: Integrar lógica de registro aquí
@@ -15,19 +16,22 @@ export const RegisterPage = () => {
     lastname: ""
   })
 
+
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
+
     try {
       const response = await fetch("http://localhost:3000/api/register", {
       method: "POST",
       credentials: "include",
       body: JSON.stringify(formState),
       headers:{
-        "Content-type": "Appication/json"
+         "Content-type": "application/json"
       }
-    })
+    });
 
     const data = await response.json();
+    console.log(data)
 
     if(response.ok) {
       alert(data.message)
@@ -46,7 +50,8 @@ export const RegisterPage = () => {
   } catch (error) {
     console.log(error)
   }
-    navigate("/home")
+    navigate("/login")
+    handleReset()
   }
 
   return (
@@ -56,7 +61,7 @@ export const RegisterPage = () => {
           Crear Cuenta
         </h2>
 
-        <form onSubmit={(event) => {handleSubmit}}>
+        <form onSubmit={(event) => {handleSubmit(event)}}>
           <div className="mb-4">
             <label
               htmlFor="username"

@@ -1,9 +1,44 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useForm } from "../hooks/useForm";
 
 export const LoginPage = () => {
   // TODO: Integrar lógica de autenticación aquí
   // TODO: Implementar useForm para el manejo del formulario
   // TODO: Implementar función handleSubmit
+
+  const {formState, handleChange, handleReset} = useForm({
+    username: "",
+    password: ""
+  })
+  const navigate = useNavigate()
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetch("http://localhost:3000/api/login",{
+        method: "POST",
+        credentials: "include",
+        body: JSON.stringify(formState),
+        headers: {
+          "Content-type": "application/json"
+        }
+      })
+
+      const data = await response.json()
+
+      if(response.ok) {
+        navigate("/home")
+        alert(data.message)
+      } else{
+        data.message
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+
+    handleReset()
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
@@ -20,7 +55,7 @@ export const LoginPage = () => {
           </p>
         </div>
 
-        <form onSubmit={(event) => {}}>
+        <form onSubmit={(event) => {handleLogin(event)}}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -35,6 +70,7 @@ export const LoginPage = () => {
               placeholder="Ingresa tu usuario"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
+              onChange={handleChange}
             />
           </div>
 
@@ -52,6 +88,7 @@ export const LoginPage = () => {
               placeholder="Ingresa tu contraseña"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
+              onChange={handleChange}
             />
           </div>
 
