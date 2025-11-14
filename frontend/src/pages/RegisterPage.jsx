@@ -1,9 +1,53 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useForm } from "../hooks/useForm";
 
 export const RegisterPage = () => {
   // TODO: Integrar lógica de registro aquí
   // TODO: Implementar useForm para el manejo del formulario
   // TODO: Implementar función handleSubmit
+  const navigate = useNavigate()
+
+  const {formState, handleChange, handleReset} = useForm({
+    username: "",
+    email: "",
+    password: "",
+    name: "",
+    lastname: ""
+  })
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    try {
+      const response = await fetch("http://localhost:3000/api/register", {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(formState),
+      headers:{
+        "Content-type": "Appication/json"
+      }
+    })
+
+    const data = await response.json();
+
+    if(response.ok) {
+      alert(data.message)
+    } else {
+      return (
+        <>
+         {/* TODO: Mostrar este div cuando haya error */}
+        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
+          <p className="text-sm">
+            Error al crear la cuenta. Intenta nuevamente.
+          </p>
+        </div>
+        </>
+      )
+    }
+  } catch (error) {
+    console.log(error)
+  }
+    navigate("/home")
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
@@ -12,14 +56,7 @@ export const RegisterPage = () => {
           Crear Cuenta
         </h2>
 
-        {/* TODO: Mostrar este div cuando haya error */}
-        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
-          <p className="text-sm">
-            Error al crear la cuenta. Intenta nuevamente.
-          </p>
-        </div>
-
-        <form onSubmit={(event) => {}}>
+        <form onSubmit={(event) => {handleSubmit}}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -34,6 +71,7 @@ export const RegisterPage = () => {
               placeholder="Elige un nombre de usuario"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
+              onChange={handleChange}
             />
           </div>
 
@@ -51,6 +89,7 @@ export const RegisterPage = () => {
               placeholder="tu@email.com"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
+              onChange={handleChange}
             />
           </div>
 
@@ -68,6 +107,7 @@ export const RegisterPage = () => {
               placeholder="Crea una contraseña segura"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
+              onChange={handleChange}
             />
           </div>
 
@@ -85,6 +125,7 @@ export const RegisterPage = () => {
               placeholder="Tu nombre"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
+              onChange={handleChange}
             />
           </div>
 
@@ -102,6 +143,7 @@ export const RegisterPage = () => {
               placeholder="Tu apellido"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
+              onChange={handleChange}
             />
           </div>
 
