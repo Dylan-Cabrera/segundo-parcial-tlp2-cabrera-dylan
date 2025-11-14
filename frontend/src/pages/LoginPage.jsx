@@ -1,5 +1,7 @@
 import { Link, useNavigate } from "react-router";
 import { useForm } from "../hooks/useForm";
+import { Loading } from "../components/Loading";
+import { useState } from "react";
 
 export const LoginPage = () => {
   // TODO: Integrar lógica de autenticación aquí
@@ -10,11 +12,13 @@ export const LoginPage = () => {
     username: "",
     password: ""
   })
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
+      setIsLoading(true)
       const response = await fetch("http://localhost:3000/api/login",{
         method: "POST",
         credentials: "include",
@@ -27,10 +31,20 @@ export const LoginPage = () => {
       const data = await response.json()
 
       if(response.ok) {
+        setIsLoading(false)
         navigate("/home")
         alert(data.message)
       } else{
-        data.message
+        return (
+          <>
+          {/* TODO: Mostrar este div cuando haya error */}
+        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
+          <p className="text-sm">
+            Credenciales incorrectas. Intenta nuevamente.
+          </p>
+        </div>
+          </>
+        )
       }
 
     } catch (error) {
@@ -47,15 +61,9 @@ export const LoginPage = () => {
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
           Iniciar Sesión
         </h2>
-
-        {/* TODO: Mostrar este div cuando haya error */}
-        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
-          <p className="text-sm">
-            Credenciales incorrectas. Intenta nuevamente.
-          </p>
-        </div>
-
         <form onSubmit={(event) => {handleLogin(event)}}>
+        {isLoading ? (<Loading/>) : (
+          <>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -91,9 +99,12 @@ export const LoginPage = () => {
               onChange={handleChange}
             />
           </div>
+          </>
+        )}
 
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded transition-colors"
           >
             Ingresar

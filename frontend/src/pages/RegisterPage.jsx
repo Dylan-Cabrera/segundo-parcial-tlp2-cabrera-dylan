@@ -1,12 +1,14 @@
 import { Link, useNavigate } from "react-router";
 import { useForm } from "../hooks/useForm";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Loading } from "../components/Loading";
 
 export const RegisterPage = () => {
   // TODO: Integrar lógica de registro aquí
   // TODO: Implementar useForm para el manejo del formulario
   // TODO: Implementar función handleSubmit
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
 
   const {formState, handleChange, handleReset} = useForm({
     username: "",
@@ -21,6 +23,7 @@ export const RegisterPage = () => {
     event.preventDefault();
 
     try {
+      setIsLoading(true)
       const response = await fetch("http://localhost:3000/api/register", {
       method: "POST",
       credentials: "include",
@@ -34,6 +37,7 @@ export const RegisterPage = () => {
     console.log(data)
 
     if(response.ok) {
+      setIsLoading(false)
       alert(data.message)
     } else {
       return (
@@ -62,6 +66,8 @@ export const RegisterPage = () => {
         </h2>
 
         <form onSubmit={(event) => {handleSubmit(event)}}>
+        {isLoading ? (<Loading/>) : (
+          <>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -151,9 +157,12 @@ export const RegisterPage = () => {
               onChange={handleChange}
             />
           </div>
+          </>
+        )}
 
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded transition-colors"
           >
             Registrarse

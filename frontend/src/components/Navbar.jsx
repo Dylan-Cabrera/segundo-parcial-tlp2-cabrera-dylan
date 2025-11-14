@@ -6,7 +6,9 @@ export const Navbar = () => {
   // TODO: Implementar función handleLogout con POST a /api/logout usando credentials: 'include'
   // TODO: Después del logout exitoso, redireccionar a /login
   // TODO: Manejar errores apropiadamente
-  const [profile, setProfile] = useState({})
+  const [profile, setProfile] = useState({user: {
+    name: ""
+  }})
   const navigate = useNavigate()
 
   const getProfile = async() => {
@@ -48,7 +50,7 @@ export const Navbar = () => {
       console.log(error)
     }
   }
-  const userName = profile.user.name; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
+  const userName = profile?.user.name; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
   return (
     <nav className="bg-gray-900 text-white h-16 left-0 right-0 shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4 h-full flex items-center justify-between">
