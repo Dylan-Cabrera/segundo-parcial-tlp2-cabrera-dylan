@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 export const Navbar = () => {
   // TODO: Obtener datos del usuario desde /api/profile
@@ -6,6 +7,7 @@ export const Navbar = () => {
   // TODO: Después del logout exitoso, redireccionar a /login
   // TODO: Manejar errores apropiadamente
   const [profile, setProfile] = useState({})
+  const navigate = useNavigate()
 
   const getProfile = async() => {
     try {
@@ -15,7 +17,6 @@ export const Navbar = () => {
       });
       const data = await response.json()
       console.log(data)
-
       if (response.ok) {
         setProfile(data);
       } 
@@ -28,6 +29,26 @@ export const Navbar = () => {
     getProfile()
   }, [])
 
+
+  const handleLogout = async (event) => {
+    event.preventDefault()
+    try {
+      const response = await fetch("http://localhost:3000/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await response.json()
+      console.log(data)
+
+      if(response.ok) {
+        navigate("/login")
+        alert(data.message)
+      } 
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const userName = profile.user.name; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
   return (
     <nav className="bg-gray-900 text-white h-16 left-0 right-0 shadow-lg sticky top-0 z-50">
@@ -41,8 +62,9 @@ export const Navbar = () => {
           </span>
 
           <button
-            onClick={() => {
+            onClick={(event) => {
               // TODO: Implementar handleLogout aquí
+              handleLogout(event)
             }}
             className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors font-medium"
           >
